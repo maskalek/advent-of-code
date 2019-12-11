@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using API;
 using Xunit;
 
 namespace Tests
@@ -20,7 +21,8 @@ namespace Tests
     {
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] { 1,2,3 };
+
+            yield return new object[] { 1, 2, 3 };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
