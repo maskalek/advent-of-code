@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ConsoleApp3
+namespace API
 {
     public class ListNode : IEnumerable<int>
     {
