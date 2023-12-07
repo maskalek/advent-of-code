@@ -2,17 +2,19 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using API.Hands;
 
 /// <summary>
 /// Represents a Solution for calculating total winning based on the bid values of cards.
 /// </summary>
-public class Solution
+public class SolutionWithJokerRule
 {
     public long GetTotalWining(string[] cards)
     {
         Array.Sort(cards, CompareHands);
-        
+        foreach (var card in cards.Reverse())
+        {
+            Console.WriteLine(card);
+        }
         long totalWining = 0;
 
         for (var i = 0; i < cards.Length; i++)
@@ -64,13 +66,19 @@ public class Solution
         return handType1 < handType2 ? -1 : 1;
     }
 
-    private EHandType GetHandType(string hand)
+    public EHandType GetHandType(string hand)
     {
         var cards = hand.ToCharArray();
         var counts = new Dictionary<char, int>();
-    
+
+        var jacks = 0;
         foreach(var card in cards)
         {
+            if (card == 'J')
+            {
+                jacks++;
+                continue;
+            }
             if(counts.ContainsKey(card)) counts[card]++;
             else counts[card] = 1;
         }
@@ -88,18 +96,29 @@ public class Solution
             else if(count == 5) fiveOfKind = true;
         }
     
-        if(fiveOfKind) return EHandType.FiveOfKind;
-        else if(fourOfKind) return EHandType.FourOfKind;
-        else if(threeOfKind && pairs == 1) return EHandType.FullHouse;
-        else if(threeOfKind) return EHandType.ThreeOfKind;
-        else if(pairs == 2) return EHandType.TwoPair;
-        else if(pairs == 1) return EHandType.OnePair;
+        if(fiveOfKind || fourOfKind && jacks == 1 || threeOfKind && jacks == 2 || pairs == 1 && jacks == 3 || jacks >= 4) return EHandType.FiveOfKind;
+        else if(fourOfKind || threeOfKind && jacks >= 1 || pairs == 1 && jacks >= 2 || jacks >= 3) return EHandType.FourOfKind;
+        else if(threeOfKind && pairs == 1 || pairs == 2 && jacks == 1 || threeOfKind && jacks >= 1 || pairs >= 1 && jacks >= 2) return EHandType.FullHouse;
+        else if(threeOfKind || pairs >= 1 && jacks >= 1 || jacks >= 2) return EHandType.ThreeOfKind;
+        else if(pairs == 2 || pairs == 1 && jacks >= 1 || jacks >= 2) return EHandType.TwoPair;
+        else if(pairs == 1 || jacks >= 1) return EHandType.OnePair;
         
         return EHandType.HighCard;
     }
     private int GetCardRank(char card)
     {
-        var ranks = new Dictionary<char, int> { { 'A', 14 }, { 'K', 13 }, { 'Q', 12 }, { 'J', 11 }, { 'T', 10 }, { '9', 9 }, { '8', 8 }, { '7', 7 }, { '6', 6 }, { '5', 5 }, { '4', 4 }, { '3', 3 }, { '2', 2 } };
+        var ranks = new Dictionary<char, int> { { 'A', 14 }, { 'K', 13 }, { 'Q', 12 }, { 'J', 1 }, { 'T', 10 }, { '9', 9 }, { '8', 8 }, { '7', 7 }, { '6', 6 }, { '5', 5 }, { '4', 4 }, { '3', 3 }, { '2', 2 } };
         return ranks[card];
+    }
+    
+    public enum EHandType
+    {
+        FiveOfKind = 7,
+        FourOfKind = 6,
+        FullHouse = 5,
+        ThreeOfKind = 4,
+        TwoPair = 3,
+        OnePair = 2,
+        HighCard = 1
     }
 }
