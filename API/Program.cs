@@ -8,8 +8,16 @@ namespace API
         public static void Main(string[] args)
         {
             var lines = ParseInputFile();
-            var result = new Solution().Sum(lines);
-            Console.WriteLine(result);
+            var res = 0;
+            foreach (var line in lines)
+            {
+                var game = new Game(line);
+                if (game.MaxRed <= 12 && game.MaxGreen <= 13 && game.MaxBlue <= 14)
+                {
+                    res += game.Id;
+                }
+            }
+            Console.WriteLine(res);
         }
         private static string[] ParseInputFile()
         {
