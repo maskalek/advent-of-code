@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 public class Solution
 {
@@ -17,7 +18,8 @@ public class Solution
     {
         // Parse the line into an array of integers
         int[] numbers = line.Split(' ').Select(int.Parse).ToArray();
-        var res = numbers.Last();
+        var res = numbers.First();
+        var sign = 1;
     
         // Repeat the process until all values are zeros
         while (!numbers.All(n => n == 0))
@@ -30,14 +32,13 @@ public class Solution
             {
                 differences[i] = numbers[i + 1] - numbers[i];
             }
-    
+
             // Replace the old numbers array with the difference array
             numbers = differences;
-            res += differences.Last();
+            res -= sign * differences.First();
+            sign *= -1;
         }
-        
-        // Since all values are zeros, we can return zero as well.
-        // If you want to return the count of zeros, return numbers.Length;
+
         return res;
     }
 }
