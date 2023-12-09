@@ -1,24 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class Solution
 {
+    Dictionary<int, List<int>> cards = new ();
+    private Dictionary<int, int> winning = new();
+
     public int Sum(string[] lines)
     {
-        var res = 0;
         foreach (var line in lines)
         {
-            res += CalcWining(line);
+            Parse(line);
         }
-
+        var res = 0;
+        foreach (var card in cards.Keys)
+        {
+            res += GetWining(card);
+            // Console.WriteLine("Card " + card + ": " + string.Join(", ", cards[card]));
+        }
         return res;
     }
 
-    private int CalcWining(string line)
+    private int GetWining(int card)
+    {
+        if (winning.ContainsKey(card)) return winning[card];
+        var res = 1;
+        foreach (var c in cards[card])
+        {
+            res += GetWining(c);
+        }
+
+        winning[card] = res;
+        return res;
+    }
+
+    private void Parse(string line)
     {
         // Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-        
-        string[] segments = line.Split(':')[1].Split('|');
+        string[] parts = line.Split(':');
+        var cardId = int.Parse(parts[0].Split(" ").Last());
+        string[] segments = parts[1].Split('|');
         
         // Console.WriteLine(segments[0]);
         // Console.WriteLine(segments[1]);
@@ -29,11 +51,10 @@ public class Solution
     
         // Find the intersection between the two sessions
         int[] intersections = firstSession.Intersect(secondSession).ToArray();
-    
-        // Calculate the number of intersections
-        int intersectionCount = intersections.Count();
-    
-        // Return 2 to the power of the number of intersections
-        return (int)Math.Pow(2, intersectionCount - 1);
+        cards[cardId] = new();
+        for(var i = 0; i < intersections.Length; i++)
+        {
+            cards[cardId].Add(cardId + i + 1);
+        }
     }
 }
