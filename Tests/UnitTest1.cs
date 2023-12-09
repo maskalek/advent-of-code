@@ -9,9 +9,9 @@ namespace Tests
     {
         [Theory]
         [ClassData(typeof(Data))]
-        public void CheckSolution(int x, int y, int expected)
+        public void CheckSolution(int expected, params string[] lines)
         {
-            var actual = new Solution().Sum(x, y);
+            var actual = new Solution().Sum(lines);
             Assert.Equal(expected, actual);
         }
 
@@ -22,7 +22,13 @@ namespace Tests
         public IEnumerator<object[]> GetEnumerator()
         {
 
-            yield return new object[] { 1, 2, 3 };
+            yield return new object[]
+            {
+                0,
+                "line1",
+                "line2",
+                "line3"
+            };
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
