@@ -8,14 +8,12 @@ namespace API
         public static void Main(string[] args)
         {
             var lines = ParseInputFile();
-            var res = 0;
+            long res = 0;
             foreach (var line in lines)
             {
                 var game = new Game(line);
-                if (game.MaxRed <= 12 && game.MaxGreen <= 13 && game.MaxBlue <= 14)
-                {
-                    res += game.Id;
-                }
+                var power = (long)game.MaxGreen * (long)game.MaxRed * (long)game.MaxBlue;
+                res += power;
             }
             Console.WriteLine(res);
         }
