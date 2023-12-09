@@ -1,7 +1,7 @@
 ﻿public class Solution
 {
-    public int Sum(int x, int y)
+    public int Sum(string[] lines)
     {
-        return x + y;
+        return 0;
     }
 }
