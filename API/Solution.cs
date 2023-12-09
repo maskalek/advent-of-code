@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 public class Solution
 {
     public int Sum(string[] lines)
     {
         var res = 0;
+        Dictionary<(int, int), List<int>> gears = new();
         for (var i = 0; i < lines.Length; i++)
         {
             var line = lines[i];
@@ -24,9 +27,16 @@ public class Solution
 
                 if (!char.IsNumber(c) || j == line.Length - 1)
                 {
-                    if (cur > 0 && CheckNumber(i, startIndex - 1, j))
+                    if (cur > 0)
                     {
-                        res += cur;
+                        foreach (var coords in FindAllGears(i, startIndex - 1, j))
+                        {
+                            if (!gears.ContainsKey(coords))
+                            {
+                                gears[coords] = new();
+                            }
+                            gears[coords].Add(cur);
+                        }
                     }
 
                     cur = 0;
@@ -35,29 +45,36 @@ public class Solution
             }
         }
 
-        return res;
-
-        bool CheckNumber(int row, int startColumn, int endColumn)
+        foreach (var (gearCoords, numbers) in gears)
         {
-            return HasSymbol(row - 1, startColumn, endColumn)
-                   || HasSymbol(row, startColumn, startColumn)
-                   || HasSymbol(row, endColumn, endColumn)
-                   || HasSymbol(row + 1, startColumn, endColumn);
+            if (numbers.Count == 2)
+            {
+                res += numbers[0] * numbers[1];
+            }
         }
 
-        bool HasSymbol(int row, int startColumn, int endColumn)
+        return res;
+
+        IEnumerable<(int, int)> FindAllGears(int row, int startColumn, int endColumn)
         {
-            if (row < 0 || row >= lines.Length) return false;
+            foreach (var valueTuple in FindGears(row - 1, startColumn, endColumn)) yield return valueTuple;
+            foreach (var valueTuple in FindGears(row, startColumn, startColumn)) yield return valueTuple;
+            foreach (var valueTuple in FindGears(row, endColumn, endColumn)) yield return valueTuple;
+            foreach (var valueTuple in FindGears(row + 1, startColumn, endColumn)) yield return valueTuple;
+        }
+
+        IEnumerable<(int, int)> FindGears(int row, int startColumn, int endColumn)
+        {
+            if (row < 0 || row >= lines.Length) yield break;
+            
             for (var k = Math.Max(0, startColumn); k <= Math.Min(endColumn, lines[row].Length - 1); k++)
             {
                 var c = lines[row][k];
-                if (c != '.' && !char.IsNumber(c))
+                if (c == '*')
                 {
-                    return true;
+                    yield return (row, k);
                 }
             }
-
-            return false;
         }
     }
 }
