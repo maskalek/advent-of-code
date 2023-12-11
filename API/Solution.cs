@@ -26,14 +26,14 @@ public class Solution
         {
             for (var j = i + 1; j < galaxies.Count; j++)
             {
-                total += Distance(galaxies[i].ToArray(), galaxies[j].ToArray());
+                total += Distance(galaxies[i].ToArray(), galaxies[j].ToArray(), 1_000_000);
             }
         }
 
         return total;
     }
 
-    private long Distance(int[] g1, int[] g2)
+    private long Distance(int[] g1, int[] g2, int expansionRatio)
     {
         long res = 0;
         var step = g1[0] < g2[0] ? 1 : -1;
@@ -47,7 +47,7 @@ public class Solution
             }
             else 
             {
-                res += 2;
+                res += expansionRatio;
             }
 
         }
@@ -62,7 +62,7 @@ public class Solution
             }
             else
             {
-                res += 2;
+                res += expansionRatio;
             }
         }
 
