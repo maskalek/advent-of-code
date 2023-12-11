@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 public class Solution
 {
-    public int Sum(string[] lines)
+    private string[] lines;
+    public long Sum(string[] input)
     {
-        lines = Expand(lines);
+        lines = Expand(input);
         var galaxies = new List<int[]>();
         for (var i = 0; i < lines.Length; i++)
         {
@@ -19,23 +21,52 @@ public class Solution
             }
         }
 
-        var total = 0;
+        long total = 0;
         for (var i = 0; i < galaxies.Count; i++)
         {
             for (var j = i + 1; j < galaxies.Count; j++)
             {
-                total += Distance(galaxies[i], galaxies[j]);
+                total += Distance(galaxies[i].ToArray(), galaxies[j].ToArray());
             }
         }
 
         return total;
     }
 
-    private int Distance(int[] g1, int[] g2)
+    private long Distance(int[] g1, int[] g2)
     {
-        var xDist = Math.Abs(g1[0] - g2[0]);
-        var yDist = Math.Abs(g1[1] - g2[1]);
-        return xDist + yDist;
+        long res = 0;
+        var step = g1[0] < g2[0] ? 1 : -1;
+        while (g1[0] != g2[0])
+        {
+            g1[0] += step;
+            var c = lines[g1[0]][g1[1]];
+            if (c != '*')
+            {
+                res++;
+            }
+            else 
+            {
+                res += 2;
+            }
+
+        }
+        step = g1[1] < g2[1] ? 1 : -1;
+        while (g1[1] != g2[1])
+        {
+            g1[1] += step;
+            var c = lines[g1[0]][g1[1]];
+            if (c != '*')
+            {
+                res++;
+            }
+            else
+            {
+                res += 2;
+            }
+        }
+
+        return res;
     }
 
     private string[] Expand(string[] lines)
@@ -60,17 +91,16 @@ public class Solution
             var sb = new StringBuilder();
             for (var j = 0; j < lines[0].Length; j++)
             {
-                sb.Append(lines[i][j]);
-                if (cols[j] == 0)
+                if (cols[j] == 0 || rows[i] == 0)
+                {
+                    sb.Append('*');
+                }
+                else
                 {
                     sb.Append(lines[i][j]);
                 }
             }
             newLines.Add(sb.ToString());
-            if (rows[i] == 0)
-            {
-                newLines.Add(sb.ToString());
-            }
         }
 
         return newLines.ToArray();
